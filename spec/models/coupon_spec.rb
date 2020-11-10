@@ -15,19 +15,18 @@ RSpec.describe Coupon, type: :model do
   it "can't have past date due_date" do
     subject.due_date = 1.day.ago
     subject.valid?
-    expect(subject.errors.keys).to include :due_date  
+    expect(subject.errors.keys).to include :due_date
   end
 
   it "can't have current date due_date" do
     subject.due_date = Time.zone.now
     subject.valid?
-    expect(subject.errors.keys).to include :due_date  
+    expect(subject.errors.keys).to include :due_date
   end
 
   it "can't have past date due_date" do
     subject.due_date = Time.zone.now + 1.hour
     subject.valid?
-    expect(subject.errors.keys).to_not include :due_date  
+    expect(subject.errors.keys).to_not include :due_date
   end
-  
 end
