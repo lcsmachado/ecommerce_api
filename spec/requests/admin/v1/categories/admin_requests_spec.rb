@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Admin::V1::Categories', type: :request do
+RSpec.describe 'Admin::V1::Categories as :admin', type: :request do
   let(:user) { create(:user) }
 
   context 'GET /categories' do
@@ -128,19 +128,19 @@ RSpec.describe 'Admin::V1::Categories', type: :request do
 
     it 'returns success status' do
       delete url, headers: auth_header(user)
-      expect(response).to have_http_status(:no_content)  
+      expect(response).to have_http_status(:no_content)
     end
 
     it 'does not have any body content' do
       delete url, headers: auth_header(user)
-      expect(body_json).to_not be_present 
+      expect(body_json).to_not be_present
     end
 
     it 'removes all associated product categories' do
-      product_categories = create_list(:product_category, 3, category: category )
+      product_categories = create_list(:product_category, 3, category: category)
       delete url, headers: auth_header(user)
       expected_product_categories = ProductCategory.where(id: product_categories.map(&:id))
-      expect(expected_product_categories).to eq []  
+      expect(expected_product_categories).to eq []
     end
   end
 end

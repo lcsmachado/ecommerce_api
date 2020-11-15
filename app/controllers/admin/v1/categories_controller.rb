@@ -1,6 +1,6 @@
 module Admin::V1
   class CategoriesController < ApiController
-    before_action :load_category, only: [:update, :destroy]
+    before_action :load_category, only: %i[update destroy]
 
     def index
       @categories = Category.all
@@ -13,7 +13,7 @@ module Admin::V1
       save_category!
     end
 
-    def update 
+    def update
       @category.attributes = category_params
 
       save_category!
@@ -21,8 +21,8 @@ module Admin::V1
 
     def destroy
       @category.destroy!
-    rescue
-      render_errors(fields: @category.errors.messages)
+    rescue StandardError
+      render_error(fields: @category.errors.messages)
     end
 
     private
@@ -41,7 +41,7 @@ module Admin::V1
       @category.save!
       render :show
     rescue StandardError
-      render_errors(fields: @category.errors.messages)
+      render_error(fields: @category.errors.messages)
     end
   end
 end
