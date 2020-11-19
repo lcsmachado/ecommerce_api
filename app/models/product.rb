@@ -1,5 +1,4 @@
 class Product < ApplicationRecord
-  
   include NameSearchable
   include Paginatable
 
