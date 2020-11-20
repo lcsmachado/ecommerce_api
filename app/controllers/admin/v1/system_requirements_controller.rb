@@ -5,24 +5,24 @@ module Admin::V1
     def index
       @system_requirements = SystemRequirement.all
     end
-    
+
     def create
       @system_requirement = SystemRequirement.new
       @system_requirement.attributes = system_requirement_params
       save_system_requirement!
     end
-    
+
     def update
       @system_requirement.attributes = system_requirement_params
       save_system_requirement!
     end
-    
+
     def destroy
       @system_requirement.destroy!
     rescue StandardError
       render_error(fields: @system_requirement.errors.messages)
     end
-    
+
     private
 
     def load_system_requirement

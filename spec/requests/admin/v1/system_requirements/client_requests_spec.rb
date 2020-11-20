@@ -22,7 +22,7 @@ RSpec.describe 'Admin::V1::SystemRequirements as :client' do
     before(:each) { patch url, headers: auth_header(user) }
     include_examples 'forbidden access'
   end
-  
+
   context 'DELETE /admin/v1/system_requirements/:id' do
     let(:system_requirement) { create(:system_requirement) }
     let(:url) { "/admin/v1/system_requirements/#{system_requirement.id}" }

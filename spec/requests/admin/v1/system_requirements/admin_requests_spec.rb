@@ -9,40 +9,40 @@ RSpec.describe 'Admin::V1::SystemRequirements as :admin' do
 
     it 'returns all system_requirements' do
       get url, headers: auth_header(user)
-      expect(body_json['system_requirements']).to contain_exactly(*system_requirements.as_json(only: %i[id name operational_system storage processor memory video_board]))  
+      expect(body_json['system_requirements']).to contain_exactly(*system_requirements.as_json(only: %i[id name operational_system storage processor memory video_board]))
     end
     it 'returns success status' do
       get url, headers: auth_header(user)
-      expect(response).to have_http_status(:ok)  
+      expect(response).to have_http_status(:ok)
     end
   end
 
   context 'POST /system_requirements' do
     let(:url) { '/admin/v1/system_requirements' }
 
-    context "with valid params" do
+    context 'with valid params' do
       let(:system_requirement_params) { { system_requirement: attributes_for(:system_requirement) }.to_json }
 
       it 'add a new system_requirement' do
         expect do
-          post url, headers: auth_header(user), params: system_requirement_params 
+          post url, headers: auth_header(user), params: system_requirement_params
         end.to change(SystemRequirement, :count).by(1)
       end
 
       it 'returns last added system_requirement' do
         post url, headers: auth_header(user), params: system_requirement_params
         expected_system_requirement = SystemRequirement.last.as_json(only: %i[id name operational_system storage processor memory video_board])
-        expect(body_json['system_requirement']).to eq expected_system_requirement 
+        expect(body_json['system_requirement']).to eq expected_system_requirement
       end
 
       it 'returns success status' do
         post url, headers: auth_header(user), params: system_requirement_params
-        expect(response).to have_http_status(:ok)  
+        expect(response).to have_http_status(:ok)
       end
     end
-    
+
     context 'with invalid params' do
-      let(:system_requirement_params) { { system_requirement: attributes_for(:system_requirement, name: nil ) }.to_json }
+      let(:system_requirement_params) { { system_requirement: attributes_for(:system_requirement, name: nil) }.to_json }
 
       it 'does not add any system_requirement' do
         expect do
@@ -57,13 +57,13 @@ RSpec.describe 'Admin::V1::SystemRequirements as :admin' do
 
       it 'returns unprocessable_entity status' do
         post url, headers: auth_header(user), params: system_requirement_params
-        expect(response).to have_http_status(:unprocessable_entity)  
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
 
   context 'PATCH /system_requirements/:id' do
-    let!(:system_requirement) { create(:system_requirement)}
+    let!(:system_requirement) { create(:system_requirement) }
     let(:url) { "/admin/v1/system_requirements/#{system_requirement.id}" }
 
     context 'with valid params' do
@@ -73,9 +73,9 @@ RSpec.describe 'Admin::V1::SystemRequirements as :admin' do
       it 'updates system_requirement' do
         patch url, headers: auth_header(user), params: system_requirement_params
         system_requirement.reload
-        expect(system_requirement.name).to eq new_name  
+        expect(system_requirement.name).to eq new_name
       end
-      
+
       it 'returns updated system_requirement' do
         patch url, headers: auth_header(user), params: system_requirement_params
         system_requirement.reload
@@ -85,10 +85,10 @@ RSpec.describe 'Admin::V1::SystemRequirements as :admin' do
 
       it 'returns success status' do
         patch url, headers: auth_header(user), params: system_requirement_params
-        expect(response).to have_http_status(:ok)  
+        expect(response).to have_http_status(:ok)
       end
     end
-    
+
     context 'with invalid params' do
       let(:system_requirement_params) do
         { system_requirement: attributes_for(:system_requirement, name: nil) }.to_json
@@ -100,7 +100,7 @@ RSpec.describe 'Admin::V1::SystemRequirements as :admin' do
         system_requirement.reload
         expect(system_requirement.name).to eq old_name
       end
-      
+
       it 'returns error messages' do
         patch url, headers: auth_header(user), params: system_requirement_params
         expect(body_json['errors']['fields']).to have_key('name')
@@ -108,13 +108,13 @@ RSpec.describe 'Admin::V1::SystemRequirements as :admin' do
 
       it 'returns unprocessable_entity status' do
         patch url, headers: auth_header(user), params: system_requirement_params
-        expect(response).to have_http_status(:unprocessable_entity)  
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
 
   context 'DELETE /system_requirements' do
-    let!(:system_requirement) { create(:system_requirement)}
+    let!(:system_requirement) { create(:system_requirement) }
     let(:url) { "/admin/v1/system_requirements/#{system_requirement.id}" }
 
     it 'deletes system_requirement' do
@@ -125,12 +125,12 @@ RSpec.describe 'Admin::V1::SystemRequirements as :admin' do
 
     it 'returns no_content status' do
       delete url, headers: auth_header(user)
-      expect(response).to have_http_status(:no_content)  
+      expect(response).to have_http_status(:no_content)
     end
 
     it 'does not have any body content' do
       delete url, headers: auth_header(user)
-      expect(body_json).to_not be_present  
+      expect(body_json).to_not be_present
     end
   end
 end

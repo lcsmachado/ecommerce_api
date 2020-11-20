@@ -14,13 +14,13 @@ RSpec.describe 'Admin::V1::Coupons as :admin', type: :request do
 
     it 'returns success status' do
       get url, headers: auth_header(user)
-      expect(response).to have_http_status(:ok)  
+      expect(response).to have_http_status(:ok)
     end
   end
-  
+
   context 'POST /admin/v1/coupons' do
     let(:url) { '/admin/v1/coupons' }
-    
+
     context 'with valid params' do
       let(:coupon_params) { { coupon: attributes_for(:coupon) }.to_json }
 
@@ -33,15 +33,15 @@ RSpec.describe 'Admin::V1::Coupons as :admin', type: :request do
       it 'returns last added coupon' do
         post url, headers: auth_header(user), params: coupon_params
         expected_coupon = Coupon.last.as_json(only: %i[id code status discount_value due_date])
-        expect(body_json['coupon']).to eq expected_coupon  
+        expect(body_json['coupon']).to eq expected_coupon
       end
 
       it 'returns success status' do
         post url, headers: auth_header(user), params: coupon_params
-        expect(response).to have_http_status(:ok)  
+        expect(response).to have_http_status(:ok)
       end
     end
-    
+
     context 'with invalid params' do
       let(:coupon_invalid_params) do
         { coupon: attributes_for(:coupon, code: nil) }.to_json
@@ -55,35 +55,34 @@ RSpec.describe 'Admin::V1::Coupons as :admin', type: :request do
 
       it 'returns error messages' do
         post url, headers: auth_header(user), params: coupon_invalid_params
-        expect(body_json['errors']['fields']).to have_key('code')  
+        expect(body_json['errors']['fields']).to have_key('code')
       end
 
       it 'returns unprocessable_entity status' do
         post url, headers: auth_header(user), params: coupon_invalid_params
-        expect(response).to have_http_status(:unprocessable_entity)  
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
 
-
   context 'PATCH /admin/v1/coupons/:id' do
     let(:coupon) { create(:coupon) }
-    let(:url) { "/admin/v1/coupons/#{coupon.id}"}
+    let(:url) { "/admin/v1/coupons/#{coupon.id}" }
 
     context 'with valid params' do
       let(:new_code) { '100KBC' }
-      let(:coupon_params) { {coupon: { code: new_code } }.to_json }
+      let(:coupon_params) { { coupon: { code: new_code } }.to_json }
 
       it 'updates coupon' do
         patch url, headers: auth_header(user), params: coupon_params
         coupon.reload
-        expect(coupon.code).to eq new_code  
+        expect(coupon.code).to eq new_code
       end
 
       it 'returns updated coupon' do
         patch url, headers: auth_header(user), params: coupon_params
         coupon.reload
-        expected_coupon = coupon.as_json(only: %i[id code status discount_value due_date] )
+        expected_coupon = coupon.as_json(only: %i[id code status discount_value due_date])
         expect(body_json['coupon']).to eq expected_coupon
       end
 
@@ -102,12 +101,12 @@ RSpec.describe 'Admin::V1::Coupons as :admin', type: :request do
         old_code = coupon.code
         patch url, headers: auth_header(user), params: coupon_invalid_params
         coupon.reload
-        expect(coupon.code).to eq old_code  
+        expect(coupon.code).to eq old_code
       end
 
       it 'returns error messages' do
         patch url, headers: auth_header(user), params: coupon_invalid_params
-        expect(body_json['errors']['fields']).to have_key('code')  
+        expect(body_json['errors']['fields']).to have_key('code')
       end
 
       it 'returns unprocessable_entity status' do
@@ -116,7 +115,6 @@ RSpec.describe 'Admin::V1::Coupons as :admin', type: :request do
       end
     end
   end
-
 
   context 'DELETE /admin/v1/coupons/:id' do
     let!(:coupon) { create(:coupon) }
@@ -130,12 +128,12 @@ RSpec.describe 'Admin::V1::Coupons as :admin', type: :request do
 
     it 'returns success status' do
       delete url, headers: auth_header(user)
-      expect(response).to have_http_status(:no_content)  
+      expect(response).to have_http_status(:no_content)
     end
 
     it 'does not return any body content' do
       delete url, headers: auth_header(user)
-      expect(body_json).to_not be_present  
+      expect(body_json).to_not be_present
     end
   end
 end

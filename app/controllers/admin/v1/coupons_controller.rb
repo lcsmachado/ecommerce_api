@@ -5,7 +5,7 @@ module Admin::V1
     def index
       @coupons = Coupon.all
     end
-    
+
     def create
       @coupon = Coupon.new
       @coupon.attributes = coupon_params
@@ -16,13 +16,13 @@ module Admin::V1
       @coupon.attributes = coupon_params
       save_coupon!
     end
-    
+
     def destroy
       @coupon.destroy!
     rescue StandardError
       render_error(fields: @coupon.errors.messages)
     end
-    
+
     private
 
     def load_coupon
@@ -34,7 +34,7 @@ module Admin::V1
 
       params.require(:coupon).permit(:code, :status, :discount_value, :due_date)
     end
-    
+
     def save_coupon!
       @coupon.save!
       render :show
