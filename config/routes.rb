@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   namespace :admin  do
     namespace :v1 do
       get "home" => "home#index"
+      resources :users
       resources :categories
       resources :system_requirements
       resources :coupons
