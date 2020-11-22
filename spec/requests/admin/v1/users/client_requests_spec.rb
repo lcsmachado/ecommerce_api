@@ -17,13 +17,15 @@ RSpec.describe 'Admin::V1::Users as :client' do
   end
 
   context 'PATCH /admin/v1/users/:id' do
-    let(:url) { "/admin/v1/users/#{user.id}" }
+    let(:user_update) { create(:user) }
+    let(:url) { "/admin/v1/users/#{user_update.id}" }
     before(:each) { patch url, headers: auth_header(user) }
     include_examples 'forbidden access'
   end
 
   context 'DELETE /admin/v1/users/:id' do
-    let(:url) { "/admin/v1/users/#{user.id}" }
+    let(:user_update) { create(:user) }
+    let(:url) { "/admin/v1/users/#{user_update.id}" }
     before(:each) { delete url, headers: auth_header(user) }
     include_examples 'forbidden access'
   end

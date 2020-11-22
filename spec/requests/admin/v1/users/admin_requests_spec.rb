@@ -10,18 +10,18 @@ RSpec.describe 'Admin::V1::Users as :admin', type: :request do
     it 'return all users' do
       users.push(user)
       get url, headers: auth_header(user)
-      expect(body_json['users']).to contain_exactly(*users.as_json(only: %i[id name email profile]))  
+      expect(body_json['users']).to contain_exactly(*users.as_json(only: %i[id name email profile]))
     end
 
     it 'return success status' do
       get url, headers: auth_header(user)
-      expect(response).to have_http_status(:ok)  
+      expect(response).to have_http_status(:ok)
     end
   end
-  
+
   context 'POST /admin/v1/users' do
     let(:url) { '/admin/v1/users' }
-    
+
     context 'with valid params' do
       let(:user_params) { { user: attributes_for(:user) }.to_json }
 
@@ -39,13 +39,13 @@ RSpec.describe 'Admin::V1::Users as :admin', type: :request do
 
       it 'returns success status' do
         post url, headers: auth_header(user), params: user_params
-        expect(response).to have_http_status(:ok)  
+        expect(response).to have_http_status(:ok)
       end
     end
-    
+
     context 'with invalid params' do
       let(:user_params) { { user: attributes_for(:user, name: nil) }.to_json }
-    
+
       it 'does not add a new user' do
         expect do
           post url, headers: auth_header(user), params: user_params
@@ -54,7 +54,7 @@ RSpec.describe 'Admin::V1::Users as :admin', type: :request do
 
       it 'returns error messages' do
         post url, headers: auth_header(user), params: user_params
-        expect(body_json['errors']['fields']).to have_key('name')  
+        expect(body_json['errors']['fields']).to have_key('name')
       end
 
       it 'returns unprocessable_entity status' do
@@ -63,7 +63,7 @@ RSpec.describe 'Admin::V1::Users as :admin', type: :request do
       end
     end
   end
-  
+
   context 'PATCH /admin/v1/users/:id' do
     let!(:user) { create(:user) }
     let(:url) { "/admin/v1/users/#{user.id}" }
@@ -87,7 +87,7 @@ RSpec.describe 'Admin::V1::Users as :admin', type: :request do
 
       it 'returns success status' do
         patch url, headers: auth_header(user), params: user_update_params
-        expect(response).to have_http_status(:ok)  
+        expect(response).to have_http_status(:ok)
       end
     end
 
@@ -100,21 +100,21 @@ RSpec.describe 'Admin::V1::Users as :admin', type: :request do
         old_name = user.name
         patch url, headers: auth_header(user), params: user_update_params
         user.reload
-        expect(user.name).to eq old_name  
+        expect(user.name).to eq old_name
       end
 
       it 'returns error messages' do
         patch url, headers: auth_header(user), params: user_update_params
-        expect(body_json['errors']['fields']).to have_key('name')  
+        expect(body_json['errors']['fields']).to have_key('name')
       end
 
       it 'returns unprocessable_entity status' do
         patch url, headers: auth_header(user), params: user_update_params
-        expect(response).to have_http_status(:unprocessable_entity)  
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
-  
+
   context 'DELETE /admin/v1/users/:id' do
     let!(:user_delete) { create(:user) }
     let(:url) { "/admin/v1/users/#{user_delete.id}" }
@@ -135,5 +135,4 @@ RSpec.describe 'Admin::V1::Users as :admin', type: :request do
       expect(body_json).to_not be_present
     end
   end
-  
 end
