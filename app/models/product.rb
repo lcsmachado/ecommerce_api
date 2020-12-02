@@ -8,6 +8,8 @@ class Product < ApplicationRecord
   validates :name, presence: true, uniqueness: { case_sensitive: false }
   validates :description, presence: true
   validates :price, presence: true, numericality: { greater_than: 0 }
+  validates :status, presence: true
+  enum status: { available: 1, unavailable: 2 }
 
   has_one_attached :image
   validates :image, presence: true
