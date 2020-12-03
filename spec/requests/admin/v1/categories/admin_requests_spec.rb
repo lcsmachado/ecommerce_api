@@ -7,81 +7,81 @@ RSpec.describe 'Admin::V1::Categories as :admin', type: :request do
     let(:url) { '/admin/v1/categories' }
     let!(:categories) { create_list(:category, 10) }
 
-    context "without any params" do
-      it "returns 10 Categories" do
+    context 'without any params' do
+      it 'returns 10 Categories' do
         get url, headers: auth_header(user)
         expect(body_json['categories'].count).to eq 10
       end
-      
-      it "returns 10 first Categories" do
+
+      it 'returns 10 first Categories' do
         get url, headers: auth_header(user)
-        expected_categories = categories[0..9].as_json(only: %i(id name))
-        expect(body_json['categories']).to contain_exactly *expected_categories
+        expected_categories = categories[0..9].as_json(only: %i[id name])
+        expect(body_json['categories']).to contain_exactly(*expected_categories)
       end
 
-      it "returns success status" do
+      it 'returns success status' do
         get url, headers: auth_header(user)
         expect(response).to have_http_status(:ok)
       end
     end
 
-    context "with search[name] param" do
+    context 'with search[name] param' do
       let!(:search_name_categories) do
-        categories = [] 
+        categories = []
         15.times { |n| categories << create(:category, name: "Search #{n + 1}") }
-        categories 
+        categories
       end
 
-      let(:search_params) { { search: { name: "Search" } } }
+      let(:search_params) { { search: { name: 'Search' } } }
 
-      it "returns only seached categories limited by default pagination" do
+      it 'returns only seached categories limited by default pagination' do
         get url, headers: auth_header(user), params: search_params
         expected_categories = search_name_categories[0..9].map do |category|
-          category.as_json(only: %i(id name))
+          category.as_json(only: %i[id name])
         end
-        expect(body_json['categories']).to contain_exactly *expected_categories
+        expect(body_json['categories']).to contain_exactly(*expected_categories)
       end
 
-      it "returns success status" do
+      it 'returns success status' do
         get url, headers: auth_header(user), params: search_params
         expect(response).to have_http_status(:ok)
       end
     end
 
-    context "with pagination params" do
+    context 'with pagination params' do
       let(:page) { 2 }
       let(:length) { 5 }
 
       let(:pagination_params) { { page: page, length: length } }
 
-      it "returns records sized by :length" do
+      it 'returns records sized by :length' do
         get url, headers: auth_header(user), params: pagination_params
         expect(body_json['categories'].count).to eq length
       end
-      
-      it "returns categories limited by pagination" do
+
+      it 'returns categories limited by pagination' do
         get url, headers: auth_header(user), params: pagination_params
-        expected_categories = categories[5..9].as_json(only: %i(id name))
-        expect(body_json['categories']).to contain_exactly *expected_categories
+        expected_categories = categories[5..9].as_json(only: %i[id name])
+        expect(body_json['categories']).to contain_exactly(*expected_categories)
       end
 
-      it "returns success status" do
+      it 'returns success status' do
         get url, headers: auth_header(user), params: pagination_params
         expect(response).to have_http_status(:ok)
       end
     end
 
-    context "with order params" do
+    context 'with order params' do
       let(:order_params) { { order: { name: 'desc' } } }
 
-      it "returns ordered categories limited by default pagination" do
+      it 'returns ordered categories limited by default pagination' do
         get url, headers: auth_header(user), params: order_params
-        categories.sort! { |a, b| b[:name] <=> a[:name]}
-        expected_categories = categories[0..9].as_json(only: %i(id name))
-        expect(body_json['categories']).to contain_exactly *expected_categories
+        categories.sort! { |a, b| b[:name] <=> a[:name] }
+        expected_categories = categories[0..9].as_json(only: %i[id name])
+        expect(body_json['categories']).to contain_exactly(*expected_categories)
       end
- 
-      it "returns success status" do
+
+      it 'returns success status' do
         get url, headers: auth_header(user), params: order_params
         expect(response).to have_http_status(:ok)
       end
@@ -142,7 +142,7 @@ RSpec.describe 'Admin::V1::Categories as :admin', type: :request do
     it 'returns requested category' do
       get url, headers: auth_header(user)
       expected_category = category.as_json(only: %i[id name])
-      expect(body_json['category']).to contain_exactly(*expected_category)  
+      expect(body_json['category']).to contain_exactly(*expected_category)
     end
 
     it 'returns success status' do

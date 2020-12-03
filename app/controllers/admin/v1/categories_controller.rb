@@ -34,10 +34,10 @@ module Admin::V1
     end
 
     def load_categories
-      permitted = params.permit({ search: :name }, {  order: {} }, :page, :length)
+      permitted = params.permit({ search: :name }, { order: {} }, :page, :length)
       Admin::ModelLoadingService.new(Category.all, permitted).call
     end
-    
+
     def category_params
       return {} unless params.has_key?(:category)
 
