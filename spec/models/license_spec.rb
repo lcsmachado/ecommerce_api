@@ -4,7 +4,7 @@ RSpec.describe License, type: :model do
   subject { build(:license) }
 
   it { is_expected.to validate_presence_of(:key) }
-  it { is_expected.to validate_uniqueness_of(:key).case_insensitive }
+  it { is_expected.to validate_uniqueness_of(:key).scoped_to(:platform).case_insensitive }
 
   it { is_expected.to validate_presence_of(:platform) }
   it { is_expected.to define_enum_for(:platform).with_values({ steam: 0, origin: 1, battle_net: 2 }) }
