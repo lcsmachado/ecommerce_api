@@ -108,7 +108,19 @@ RSpec.describe 'Admin::V1:Licenses as :admin', type: :request do
   end
 
   context 'GET /licenses/:id' do
-    
+    let!(:license) { create(:license) }
+    let(:url) { "/admin/v1/licenses/#{license.id}" }
+
+    it 'returns requested license' do
+      get url, headers: auth_header(user)
+      expected_license = license.as_json(only: %i[id key])
+      expect(body_json['license']).to contain_exactly(*expected_license) 
+    end
+
+    it 'return success status' do
+      get url, headers: auth_header(user)
+      expect(response).to have_http_status(:ok)
+    end
   end
 
   context 'PATCH /licenses/:id' do

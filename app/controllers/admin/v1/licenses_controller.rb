@@ -1,5 +1,7 @@
 module Admin::V1
   class LicensesController < ApiController
+    before_action :load_license, only: %i[show update destroy]
+
     def index
       @loading_service = Admin::ModelLoadingService.new(License.all, searchable_params)
       @loading_service.call
@@ -10,6 +12,9 @@ module Admin::V1
       @license.attributes = license_params
       save_license!
     end
+
+    def show; end
+    
     private 
 
     def load_license
