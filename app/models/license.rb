@@ -1,4 +1,6 @@
 class License < ApplicationRecord
+  include Paginatable
+
   belongs_to :game
 
   validates :key, presence: true, uniqueness: { case_sensitive: false, scope: :platform }
