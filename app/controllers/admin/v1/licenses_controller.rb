@@ -20,6 +20,12 @@ module Admin::V1
       save_license!
     end
 
+    def destroy
+      @license.destroy!
+    rescue StandardError
+      render_error(fields: @license.errors.messages)
+    end
+
     private 
 
     def load_license
