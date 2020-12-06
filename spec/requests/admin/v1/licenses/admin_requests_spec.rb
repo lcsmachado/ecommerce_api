@@ -124,7 +124,37 @@ RSpec.describe 'Admin::V1:Licenses as :admin', type: :request do
   end
 
   context 'PATCH /licenses/:id' do
-    
+    let!(:license) { create(:license) }
+    let(:url) { "/admin/v1/licenses/#{license.id}" }
+
+    context 'with valid license params' do
+      let(:new_game) { create(:game) }
+      let(:license_params) do
+        { license: attributes_for(:license, game_id: new_game.id) }.to_json
+      end
+
+      it 'updates license' do
+        patch url, headers: auth_header(user), params: license_params
+        license.reload
+        expect(license.game_id).to eq new_game.id
+      end
+
+      it 'returns updated license' do
+        patch url, headers: auth_header(user), params: license_params
+        license.reload
+        expected_license = license.as_json(only: %i[id key])
+        expect(body_json['license']).to contain_exactly(*expected_license)
+      end
+
+      it 'returns success status' do
+        patch url, headers: auth_header(user), params: license_params
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'with invalid license params' do
+      
+    end
   end
 
   context 'DELETE /licenses/:id' do

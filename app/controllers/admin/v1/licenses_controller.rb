@@ -14,7 +14,12 @@ module Admin::V1
     end
 
     def show; end
-    
+
+    def update
+      @license.attributes = license_params
+      save_license!
+    end
+
     private 
 
     def load_license
