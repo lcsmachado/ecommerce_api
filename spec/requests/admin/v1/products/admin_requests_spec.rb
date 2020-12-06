@@ -1,28 +1,28 @@
 require 'rails_helper'
 
-RSpec.describe "Admin V1 Products as :admin", type: :request do
+RSpec.describe 'Admin V1 Products as :admin', type: :request do
   let(:user) { create(:user) }
 
-  context "GET /products" do
-    let(:url) { "/admin/v1/products" }
+  context 'GET /products' do
+    let(:url) { '/admin/v1/products' }
     let!(:categories) { create_list(:category, 2) }
     let!(:products) { create_list(:product, 10, categories: categories) }
 
-    context "without any params" do
-      it "returns 10 records" do
+    context 'without any params' do
+      it 'returns 10 records' do
         get url, headers: auth_header(user)
         expect(body_json['products'].count).to eq 10
       end
-      
-      it "returns Products with :productable following default pagination" do
+
+      it 'returns Products with :productable following default pagination' do
         get url, headers: auth_header(user)
-        expected_return = products[0..9].map do |product| 
+        expected_return = products[0..9].map do |product|
           build_game_product_json(product)
         end
-        expect(body_json['products']).to contain_exactly *expected_return
+        expect(body_json['products']).to contain_exactly(*expected_return)
       end
 
-      it "returns success status" do
+      it 'returns success status' do
         get url, headers: auth_header(user)
         expect(response).to have_http_status(:ok)
       end
@@ -32,24 +32,24 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
       end
     end
 
-    context "with search[name] param" do
+    context 'with search[name] param' do
       let!(:search_name_products) do
-        products = [] 
+        products = []
         15.times { |n| products << create(:product, name: "Search #{n + 1}") }
-        products 
+        products
       end
 
-      let(:search_params) { { search: { name: "Search" } } }
+      let(:search_params) { { search: { name: 'Search' } } }
 
-      it "returns only seached products limited by default pagination" do
+      it 'returns only seached products limited by default pagination' do
         get url, headers: auth_header(user), params: search_params
         expected_return = search_name_products[0..9].map do |product|
           build_game_product_json(product)
         end
-        expect(body_json['products']).to contain_exactly *expected_return
+        expect(body_json['products']).to contain_exactly(*expected_return)
       end
 
-      it "returns success status" do
+      it 'returns success status' do
         get url, headers: auth_header(user), params: search_params
         expect(response).to have_http_status(:ok)
       end
@@ -59,26 +59,26 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
       end
     end
 
-    context "with pagination params" do
+    context 'with pagination params' do
       let(:page) { 2 }
       let(:length) { 5 }
 
       let(:pagination_params) { { page: page, length: length } }
 
-      it "returns records sized by :length" do
+      it 'returns records sized by :length' do
         get url, headers: auth_header(user), params: pagination_params
         expect(body_json['products'].count).to eq length
       end
-      
-      it "returns products limited by pagination" do
+
+      it 'returns products limited by pagination' do
         get url, headers: auth_header(user), params: pagination_params
         expected_return = products[5..9].map do |product|
           build_game_product_json(product)
         end
-        expect(body_json['products']).to contain_exactly *expected_return
+        expect(body_json['products']).to contain_exactly(*expected_return)
       end
 
-      it "returns success status" do
+      it 'returns success status' do
         get url, headers: auth_header(user), params: pagination_params
         expect(response).to have_http_status(:ok)
       end
@@ -88,19 +88,19 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
       end
     end
 
-    context "with order params" do
+    context 'with order params' do
       let(:order_params) { { order: { name: 'desc' } } }
 
-      it "returns ordered products limited by default pagination" do
+      it 'returns ordered products limited by default pagination' do
         get url, headers: auth_header(user), params: order_params
         products.sort! { |a, b| b[:name] <=> a[:name] }
         expected_return = products[0..9].map do |product|
           build_game_product_json(product)
         end
-        expect(body_json['products']).to contain_exactly *expected_return
+        expect(body_json['products']).to contain_exactly(*expected_return)
       end
- 
-      it "returns success status" do
+
+      it 'returns success status' do
         get url, headers: auth_header(user), params: order_params
         expect(response).to have_http_status(:ok)
       end
@@ -111,17 +111,17 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
     end
   end
 
-  context "POST /products" do
-    let(:url) { "/admin/v1/products" }
+  context 'POST /products' do
+    let(:url) { '/admin/v1/products' }
     let(:categories) { create_list(:category, 2) }
     let(:system_requirement) { create(:system_requirement) }
     let(:post_header) { auth_header(user, merge_with: { 'Content-Type' => 'multipart/form-data' }) }
-    
-    context "with valid params" do
+
+    context 'with valid params' do
       let(:game_params) { attributes_for(:game, system_requirement_id: system_requirement.id) }
-      let(:product_params) do 
+      let(:product_params) do
         { product: attributes_for(:product).merge(category_ids: categories.map(&:id))
-                                           .merge(productable: "game").merge(game_params) }
+                                           .merge(productable: 'game').merge(game_params) }
       end
 
       it 'adds a new Product' do
@@ -138,7 +138,7 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
 
       it 'associates categories to Product' do
         post url, headers: post_header, params: product_params
-        expect(Product.last.categories.ids).to contain_exactly *categories.map(&:id)
+        expect(Product.last.categories.ids).to contain_exactly(*categories.map(&:id))
       end
 
       it 'returns last added Product' do
@@ -153,11 +153,11 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
       end
     end
 
-    context "with invalid Product params" do
+    context 'with invalid Product params' do
       let(:game_params) { attributes_for(:game, system_requirement_id: system_requirement.id) }
-      let(:product_invalid_params) do 
+      let(:product_invalid_params) do
         { product: attributes_for(:product, name: nil).merge(category_ids: categories.map(&:id))
-                                                      .merge(productable: "game").merge(game_params) }
+                                                      .merge(productable: 'game').merge(game_params) }
       end
 
       it 'does not add a new Product' do
@@ -189,10 +189,10 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
       end
     end
 
-    context "with invalid :productable params" do
-      let(:game_params) { attributes_for(:game, developer: "", system_requirement_id: system_requirement.id) }
-      let(:invalid_productable_params) do 
-        { product: attributes_for(:product).merge(productable: "game").merge(game_params) }
+    context 'with invalid :productable params' do
+      let(:game_params) { attributes_for(:game, developer: '', system_requirement_id: system_requirement.id) }
+      let(:invalid_productable_params) do
+        { product: attributes_for(:product).merge(productable: 'game').merge(game_params) }
       end
 
       it 'does not add a new Product' do
@@ -224,7 +224,7 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
       end
     end
 
-    context "without :productable params" do
+    context 'without :productable params' do
       let(:product_without_productable_params) do
         { product: attributes_for(:product).merge(category_ids: categories.map(&:id)) }
       end
@@ -259,23 +259,23 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
     end
   end
 
-  context "GET /products/:id" do
+  context 'GET /products/:id' do
     let(:product) { create(:product) }
     let(:url) { "/admin/v1/products/#{product.id}" }
 
-    it "returns requested Product" do
+    it 'returns requested Product' do
       get url, headers: auth_header(user)
       expected_product = build_game_product_json(product)
       expect(body_json['product']).to eq expected_product
     end
 
-    it "returns success status" do
+    it 'returns success status' do
       get url, headers: auth_header(user)
       expect(response).to have_http_status(:ok)
     end
   end
 
-  context "PATCH /products/:id" do
+  context 'PATCH /products/:id' do
     let(:old_categories) { create_list(:category, 2) }
     let(:new_categories) { create_list(:category, 2) }
     let(:product) { create(:product, categories: old_categories) }
@@ -283,9 +283,9 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
     let(:url) { "/admin/v1/products/#{product.id}" }
     let(:patch_header) { auth_header(user, merge_with: { 'Content-Type' => 'multipart/form-data' }) }
 
-    context "with valid Product params" do
+    context 'with valid Product params' do
       let(:new_name) { 'New name' }
-      let(:product_params) do 
+      let(:product_params) do
         { product: attributes_for(:product, name: new_name).merge(category_ids: new_categories.map(&:id)) }
       end
 
@@ -298,7 +298,7 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
       it 'updates to new categories' do
         patch url, headers: patch_header, params: product_params
         product.reload
-        expect(product.categories.ids).to contain_exactly *new_categories.map(&:id)
+        expect(product.categories.ids).to contain_exactly(*new_categories.map(&:id))
       end
 
       it 'returns updated Product' do
@@ -314,8 +314,8 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
       end
     end
 
-    context "with invalid Product params" do
-      let(:product_invalid_params) do 
+    context 'with invalid Product params' do
+      let(:product_invalid_params) do
         { product: attributes_for(:product, name: nil).merge(category_ids: new_categories.map(&:id)) }
       end
 
@@ -329,7 +329,7 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
       it 'keeps old categories' do
         patch url, headers: patch_header, params: product_invalid_params
         product.reload
-        expect(product.categories.ids).to contain_exactly *old_categories.map(&:id)
+        expect(product.categories.ids).to contain_exactly(*old_categories.map(&:id))
       end
 
       it 'returns error message' do
@@ -343,9 +343,9 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
       end
     end
 
-    context "with invalid :productable params" do
-      let(:invalid_productable_params) do 
-        { product: attributes_for(:game, developer: "") }
+    context 'with invalid :productable params' do
+      let(:invalid_productable_params) do
+        { product: attributes_for(:game, developer: '') }
       end
 
       it 'does not update productable' do
@@ -366,7 +366,7 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
       end
     end
 
-    context "without :productable params" do
+    context 'without :productable params' do
       let(:new_name) { 'New name' }
       let(:product_without_productable_params) do
         { product: attributes_for(:product, name: new_name).merge(category_ids: new_categories.map(&:id)) }
@@ -381,7 +381,7 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
       it 'updates to new categories' do
         patch url, headers: patch_header, params: product_without_productable_params
         product.reload
-        expect(product.categories.ids).to contain_exactly *new_categories.map(&:id)
+        expect(product.categories.ids).to contain_exactly(*new_categories.map(&:id))
       end
 
       it 'returns updated Product' do
@@ -398,19 +398,19 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
     end
   end
 
-  context "DELETE /products/:id" do
+  context 'DELETE /products/:id' do
     let(:productable) { create(:game) }
     let!(:product) { create(:product, productable: productable) }
     let(:url) { "/admin/v1/products/#{product.id}" }
 
     it 'removes Product' do
-      expect do  
+      expect do
         delete url, headers: auth_header(user)
       end.to change(Product, :count).by(-1)
     end
 
     it 'removes productable' do
-      expect do  
+      expect do
         delete url, headers: auth_header(user)
       end.to change(Game, :count).by(-1)
     end
@@ -443,9 +443,9 @@ RSpec.describe "Admin V1 Products as :admin", type: :request do
 end
 
 def build_game_product_json(product)
-  json = product.as_json(only: %i(id name description price status))
+  json = product.as_json(only: %i[id name description price status])
   json['categories'] = product.categories.map(&:name)
   json['image_url'] = rails_blob_url(product.image)
   json['productable'] = product.productable_type.underscore
-  json.merge product.productable.as_json(only: %i(mode release_date developer))
+  json.merge product.productable.as_json(only: %i[mode release_date developer])
 end

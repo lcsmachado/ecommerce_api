@@ -1,4 +1,4 @@
-module Admin  
+module Admin
   class ModelLoadingService
     attr_reader :records, :pagination
 

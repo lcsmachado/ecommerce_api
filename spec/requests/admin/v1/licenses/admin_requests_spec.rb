@@ -9,7 +9,6 @@ RSpec.describe 'Admin::V1:Licenses as :admin', type: :request do
     let!(:licenses) { create_list(:license, 10) }
 
     context 'without any params' do
-
       it 'returns 10 licenses' do
         get url, headers: auth_header(user)
         expect(body_json['licenses'].count).to eq 10
@@ -58,7 +57,7 @@ RSpec.describe 'Admin::V1:Licenses as :admin', type: :request do
       end
     end
   end
-  
+
   context 'POST /licenses' do
     let(:url) { '/admin/v1/licenses' }
 
@@ -87,7 +86,7 @@ RSpec.describe 'Admin::V1:Licenses as :admin', type: :request do
       let(:license_invalid_params) do
         { license: attributes_for(:license, key: '') }.to_json
       end
-      
+
       it 'does not add a new license' do
         expect do
           post url, headers: auth_header(user), params: license_invalid_params
@@ -104,7 +103,6 @@ RSpec.describe 'Admin::V1:Licenses as :admin', type: :request do
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
-    
   end
 
   context 'GET /licenses/:id' do
@@ -114,7 +112,7 @@ RSpec.describe 'Admin::V1:Licenses as :admin', type: :request do
     it 'returns requested license' do
       get url, headers: auth_header(user)
       expected_license = license.as_json(only: %i[id key])
-      expect(body_json['license']).to contain_exactly(*expected_license) 
+      expect(body_json['license']).to contain_exactly(*expected_license)
     end
 
     it 'return success status' do
@@ -156,7 +154,7 @@ RSpec.describe 'Admin::V1:Licenses as :admin', type: :request do
       let(:license_invalid_params) do
         { license: attributes_for(:license, key: '') }.to_json
       end
-      
+
       it 'does not update license' do
         old_key = license.key
         patch url, headers: auth_header(user), params: license_invalid_params
@@ -181,7 +179,7 @@ RSpec.describe 'Admin::V1:Licenses as :admin', type: :request do
     let(:url) { "/admin/v1/licenses/#{license.id}" }
 
     it 'removes license' do
-      expect do  
+      expect do
         delete url, headers: auth_header(user)
       end.to change(License, :count).by(-1)
     end

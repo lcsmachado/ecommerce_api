@@ -26,12 +26,12 @@ module Admin::V1
       render_error(fields: @license.errors.messages)
     end
 
-    private 
+    private
 
     def load_license
-      @license = License.find(params[:id])      
+      @license = License.find(params[:id])
     end
-    
+
     def searchable_params
       params.permit({ search: :name }, { order: {} }, :page, :length)
     end
