@@ -5,7 +5,7 @@ RSpec.describe 'Admin::V1::SystemRequirements as :admin' do
 
   context 'GET /system_requirements' do
     let(:url) { '/admin/v1/system_requirements' }
-    let!(:system_requirements) { create_list(:system_requirement, 5) }
+    let!(:system_requirements) { create_list(:system_requirement, 10) }
 
     it 'returns all system_requirements' do
       get url, headers: auth_header(user)
@@ -14,6 +14,10 @@ RSpec.describe 'Admin::V1::SystemRequirements as :admin' do
     it 'returns success status' do
       get url, headers: auth_header(user)
       expect(response).to have_http_status(:ok)
+    end
+
+    it_behaves_like 'pagination meta attributes', { page: 1, length: 10, total: 10, total_pages: 1 } do
+      before { get url, headers: auth_header(user) }
     end
   end
 

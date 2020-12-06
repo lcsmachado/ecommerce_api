@@ -5,7 +5,7 @@ RSpec.describe 'Admin::V1::Coupons as :admin', type: :request do
 
   context 'GET /admin/v1/coupons' do
     let(:url) { '/admin/v1/coupons' }
-    let!(:coupons) { create_list(:coupon, 5) }
+    let!(:coupons) { create_list(:coupon, 10) }
 
     it 'returns all coupons' do
       get url, headers: auth_header(user)
@@ -15,6 +15,10 @@ RSpec.describe 'Admin::V1::Coupons as :admin', type: :request do
     it 'returns success status' do
       get url, headers: auth_header(user)
       expect(response).to have_http_status(:ok)
+    end
+
+    it_behaves_like 'pagination meta attributes', { page: 1, length: 10, total: 10, total_pages: 1 } do
+      before { get url, headers: auth_header(user) }
     end
   end
 
